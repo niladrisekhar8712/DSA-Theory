@@ -102,6 +102,8 @@ int main(){
 				break;
 			case 5:
 				exit(1);
+			default:
+				cout<<"Invalid Input"<<endl;
 		}
 	}
 }
