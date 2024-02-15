@@ -1,0 +1,75 @@
+import java.util.Arrays;
+
+class DisjointSet {
+    public int[] rank;
+    public int[] parent;
+    public int[] size;
+    public DisjointSet(int n){
+        size = new int[n+1];
+        Arrays.fill(size,1);
+        rank = new int[n+1];
+        parent = new int[n+1];
+        for(int i = 0;i<=n;i++){
+            parent[i] = i;
+        }
+    }
+    public int findUPar(int node){
+        if(parent[node] == node){
+            return node;
+        }
+        return parent[node] = findUPar(parent[node]);
+    }
+    public void unionByRank(int u, int v){
+        int up_u = findUPar(u);
+        int up_v = findUPar(v);
+        if(up_v == up_u) return;
+        if(rank[up_u] > rank[up_v]){
+            parent[up_v] = up_u;
+        }
+        else if(rank[up_v] > rank[up_u]){
+            parent[up_u] = up_v;
+        }
+        else{
+            parent[up_v] = up_u;
+            rank[up_u]++;
+        }
+    }
+    public void unionBySize(int u, int v){
+        int up_u = findUPar(u);
+        int up_v = findUPar(v);
+        if(up_v == up_u) return;
+        if(size[up_u] > size[up_v]){
+            parent[up_v] = up_u;
+            size[up_u] += size[up_v];
+        }
+        else if(size[up_v] > size[up_u]){
+            parent[up_u] = up_v;
+            size[up_v] += size[up_u];
+        }
+        else{
+            parent[up_u] = up_v;
+            size[up_v] += size[up_u];
+        }
+    }
+}
+public class Main {
+    public static int makeConnected(int n, int[][] connections) {
+        if(connections.length < n-1) return -1;
+        DisjointSet ds = new DisjointSet(n);
+        for(int i = 0;i<connections.length;i++){
+            ds.unionBySize(connections[i][0],connections[i][1]);
+        }
+        int count = 0;
+        for(int i=0;i<n;i++){
+            if(ds.parent[i] == i){
+                count++;
+            }
+        }
+        return count-1;
+    }
+    public static void main(String[] args) {
+        int n = 6;
+        int[][] connections = {{0,1},{0,2},{0,3},{1,2},{1,3}};
+        System.out.println(makeConnected(n,connections));
+    }
+}
